@@ -1,0 +1,76 @@
+using System;
+using System.Windows.Forms;
+
+namespace Review_Q1
+{
+    public partial class Form1 : Form
+    {
+        // variables for future game logic
+        private string compChoice = string.Empty;
+        private string playerChoice = string.Empty;
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // Initialize UI: hide pictures and clear result
+            computerPictureBox.Visible = false;
+            playerPictureBox.Visible = false;
+            resultLabel.Text = string.Empty;
+        }
+
+        private void stoneButton_Click(object sender, EventArgs e)
+        {
+            // placeholder for player chooses stone
+            playerChoice = "stone";
+            // showPlayerImage();
+            // getCompChoice();
+            // showComputerImage();
+            // showWinner();
+        }
+
+        private void paperButton_Click(object sender, EventArgs e)
+        {
+            // placeholder for player chooses paper
+            playerChoice = "paper";
+        }
+
+        private void scissorButton_Click(object sender, EventArgs e)
+        {
+            // placeholder for player chooses scissor
+            playerChoice = "scissor";
+        }
+
+        private void exitButton_Click(object sender, EventArgs e)
+        {
+            // Close the form; statistical summary can be shown before closing if needed
+            Close();
+        }
+
+       
+
+        // Stubs for suggested modular methods. Implementations intentionally omitted per request.
+        private void getCompChoice()
+        {
+            // generate computer random choice and assign to compChoice
+        }
+
+        private void showComputerImage()
+        {
+            // show appropriate image in computerPictureBox based on compChoice
+        }
+
+        private void showPlayerImage()
+        {
+            // show appropriate image in playerPictureBox based on playerChoice
+        }
+
+        private void showWinner()
+        {
+            // compare playerChoice and compChoice, update resultLabel and statistics
+        }
+    }
+}
