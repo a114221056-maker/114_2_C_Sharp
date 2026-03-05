@@ -1,0 +1,250 @@
+﻿using System.Globalization;
+using System.IO;
+using System.Text;
+
+namespace Review_Q2
+{
+    public partial class Form1 : Form
+    {
+        // Fixed fees and rates
+        private const decimal OIL_CHANGE_FEE = 780m;
+        private const decimal LUBE_SERVICE_FEE = 540m;
+        private const decimal RADIATOR_WASH_FEE = 900m;
+        private const decimal TRANSMISSION_WASH_FEE = 2400m;
+        private const decimal INSPECTION_FEE = 450m;
+        private const decimal MUFFLER_REPLACE_FEE = 3000m;
+        private const decimal TIRE_ROTATION_FEE = 600m;
+        private const decimal LABOR_RATE_PER_HOUR = 600m;
+        private const decimal PARTS_TAX_RATE = 0.06m;
+
+        public Form1()
+        {
+            InitializeComponent();
+
+            // Wire up events
+            btnCalculate.Click += calculateButton_Click;
+            btnClear.Click += clearButton_Click;
+            btnExit.Click += exitButton_Click;
+
+            // Make tax textbox read-only (calculated)
+            txtTax.ReadOnly = true;
+
+            // Init display labels
+            ClearFees();
+        }
+
+        #region Charge calculation methods
+
+        // 計算機油與潤滑服務費用
+        private decimal OilLubeCharges()
+        {
+            decimal total = 0m;
+            if (chkReplaceOil.Checked) total += OIL_CHANGE_FEE;
+            if (chkLubricationService.Checked) total += LUBE_SERVICE_FEE;
+            return total;
+        }
+
+        // 計算清洗服務費用
+        private decimal FlushCharges()
+        {
+            decimal total = 0m;
+            if (chkRadiatorWash.Checked) total += RADIATOR_WASH_FEE;
+            if (chkTransmissionWash.Checked) total += TRANSMISSION_WASH_FEE;
+            return total;
+        }
+
+        // 計算其他服務費用
+        private decimal MiscCharges()
+        {
+            decimal total = 0m;
+            if (chkInspection.Checked) total += INSPECTION_FEE;
+            if (chkReplaceMuffler.Checked) total += MUFFLER_REPLACE_FEE;
+            if (chkTireRotation.Checked) total += TIRE_ROTATION_FEE;
+            return total;
+        }
+
+        // 計算零件與工時費用（回傳零件費用與工時費）
+        private (decimal partsCost, decimal laborCost) OtherCharges()
+        {
+            decimal partsCost = 0m;
+            decimal laborHours = 0m;
+
+            if (!decimal.TryParse(txtPartsPrice.Text.Trim(), NumberStyles.Number, CultureInfo.InvariantCulture, out partsCost))
+            {
+                // 嘗試使用本地文化解析（使用者可能輸入逗號等）
+                decimal.TryParse(txtPartsPrice.Text.Trim(), NumberStyles.Number, CultureInfo.CurrentCulture, out partsCost);
+            }
+
+            if (!decimal.TryParse(txtLaborHours.Text.Trim(), NumberStyles.Number, CultureInfo.InvariantCulture, out laborHours))
+            {
+                decimal.TryParse(txtLaborHours.Text.Trim(), NumberStyles.Number, CultureInfo.CurrentCulture, out laborHours);
+            }
+
+            // 不允許負數
+            if (partsCost < 0) partsCost = 0m;
+            if (laborHours < 0) laborHours = 0m;
+
+            decimal laborCost = laborHours * LABOR_RATE_PER_HOUR;
+            return (partsCost, laborCost);
+        }
+
+        // 計算零件稅金
+        private decimal TaxCharges(decimal partsCost)
+        {
+            return Math.Round(partsCost * PARTS_TAX_RATE, 0);
+        }
+
+        // 計算總費用
+        private decimal TotalCharges(decimal serviceAndLabor, decimal partsCost, decimal tax)
+        {
+            return serviceAndLabor + partsCost + tax;
+        }
+
+        #endregion
+
+        #region Event handlers
+
+        private void calculateButton_Click(object? sender, EventArgs e)
+        {
+            // 計算服務費與工資
+            decimal serviceFees = OilLubeCharges() + FlushCharges() + MiscCharges();
+
+            // 取得零件與工時
+            var (partsCost, laborCost) = OtherCharges();
+
+            decimal serviceAndLaborTotal = serviceFees + laborCost;
+            decimal tax = TaxCharges(partsCost);
+            decimal total = TotalCharges(serviceAndLaborTotal, partsCost, tax);
+
+            // 使用台灣貨幣格式顯示
+            var culture = CultureInfo.CreateSpecificCulture("zh-TW");
+
+            txtServiceAndLabor.Text = serviceAndLaborTotal.ToString("C0", culture);
+            txtPartsSummary.Text = partsCost.ToString("C0", culture);
+            txtTax.Text = tax.ToString("C0", culture);
+            txtTotal.Text = total.ToString("C0", culture);
+        }
+
+        private void clearButton_Click(object? sender, EventArgs e)
+        {
+            ClearOilLube();
+            ClearFlushes();
+            ClearMisc();
+            ClearOther();
+            ClearFees();
+        }
+
+        private void exitButton_Click(object? sender, EventArgs e)
+        {
+            var result = MessageBox.Show("是否要儲存維修明細再離開?", "離開確認", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            if (result == DialogResult.Cancel) return;
+            if (result == DialogResult.Yes)
+            {
+                SaveServiceDetailsToFile();
+            }
+
+            Close();
+        }
+
+        #endregion
+
+        #region Clear helpers
+
+        private void ClearOilLube()
+        {
+            chkReplaceOil.Checked = false;
+            chkLubricationService.Checked = false;
+        }
+
+        private void ClearFlushes()
+        {
+            chkRadiatorWash.Checked = false;
+            chkTransmissionWash.Checked = false;
+        }
+
+        private void ClearMisc()
+        {
+            chkInspection.Checked = false;
+            chkReplaceMuffler.Checked = false;
+            chkTireRotation.Checked = false;
+        }
+
+        private void ClearOther()
+        {
+            txtPartsPrice.Text = string.Empty;
+            txtLaborHours.Text = string.Empty;
+        }
+
+        private void ClearFees()
+        {
+            var culture = CultureInfo.CreateSpecificCulture("zh-TW");
+            txtServiceAndLabor.Text = (0m).ToString("C0", culture);
+            txtPartsSummary.Text = (0m).ToString("C0", culture);
+            txtTax.Text = (0m).ToString("C0", culture);
+            txtTotal.Text = (0m).ToString("C0", culture);
+        }
+
+        #endregion
+
+        #region File output
+
+        private void SaveServiceDetailsToFile()
+        {
+            // Recalculate to ensure values are current
+            decimal serviceFees = OilLubeCharges() + FlushCharges() + MiscCharges();
+            var (partsCost, laborCost) = OtherCharges();
+            decimal serviceAndLaborTotal = serviceFees + laborCost;
+            decimal tax = TaxCharges(partsCost);
+            decimal total = TotalCharges(serviceAndLaborTotal, partsCost, tax);
+
+            var culture = CultureInfo.CreateSpecificCulture("zh-TW");
+
+            var sb = new StringBuilder();
+            sb.AppendLine("汽車維修服務明細");
+            sb.AppendLine("日期: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            sb.AppendLine(new string('-', 50));
+            sb.AppendLine("選擇的服務項目:");
+
+            if (chkReplaceOil.Checked) sb.AppendLine($"- 更換機油: {OIL_CHANGE_FEE.ToString("C0", culture)}");
+            if (chkLubricationService.Checked) sb.AppendLine($"- 潤滑保養: {LUBE_SERVICE_FEE.ToString("C0", culture)}");
+            if (chkRadiatorWash.Checked) sb.AppendLine($"- 水箱清洗: {RADIATOR_WASH_FEE.ToString("C0", culture)}");
+            if (chkTransmissionWash.Checked) sb.AppendLine($"- 變速箱清洗: {TRANSMISSION_WASH_FEE.ToString("C0", culture)}");
+            if (chkInspection.Checked) sb.AppendLine($"- 檢驗: {INSPECTION_FEE.ToString("C0", culture)}");
+            if (chkReplaceMuffler.Checked) sb.AppendLine($"- 更換消音器: {MUFFLER_REPLACE_FEE.ToString("C0", culture)}");
+            if (chkTireRotation.Checked) sb.AppendLine($"- 輪胎換位: {TIRE_ROTATION_FEE.ToString("C0", culture)}");
+
+            sb.AppendLine();
+            sb.AppendLine("零件與工時計算:");
+            sb.AppendLine($"- 零件費用: {partsCost.ToString("C0", culture)}");
+            sb.AppendLine($"- 工時 (小時): {txtLaborHours.Text}");
+            sb.AppendLine($"- 工時費用: {laborCost.ToString("C0", culture)}");
+            sb.AppendLine();
+            sb.AppendLine("費用摘要:");
+            sb.AppendLine($"- 服務與工資總額: {serviceAndLaborTotal.ToString("C0", culture)}");
+            sb.AppendLine($"- 零件: {partsCost.ToString("C0", culture)}");
+            sb.AppendLine($"- 稅金 (零件6%): {tax.ToString("C0", culture)}");
+            sb.AppendLine($"- 總費用: {total.ToString("C0", culture)}");
+            sb.AppendLine(new string('-', 50));
+
+            using var sfd = new SaveFileDialog();
+            sfd.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+            sfd.DefaultExt = "txt";
+            sfd.FileName = "維修明細_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".txt";
+
+            if (sfd.ShowDialog() != DialogResult.OK) return;
+
+            try
+            {
+                using var sw = new StreamWriter(sfd.FileName, false, Encoding.UTF8);
+                sw.Write(sb.ToString());
+                MessageBox.Show("已儲存維修明細。", "完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("儲存檔案時發生錯誤: " + ex.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        #endregion
+    }
+}

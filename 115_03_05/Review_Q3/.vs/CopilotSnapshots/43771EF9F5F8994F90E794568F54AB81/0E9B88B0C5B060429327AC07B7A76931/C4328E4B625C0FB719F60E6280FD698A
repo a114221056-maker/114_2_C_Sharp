@@ -1,0 +1,130 @@
+﻿namespace Review_Q3
+{
+    partial class Form1
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        // UI controls
+        private System.Windows.Forms.Label lblNumber1;
+        private System.Windows.Forms.Label lblNumber2;
+        private System.Windows.Forms.Label lblNumber3;
+        private System.Windows.Forms.Label lblNumber4;
+        private System.Windows.Forms.Label lblNumber5;
+        private System.Windows.Forms.Label lblNumber6;
+        private System.Windows.Forms.Button btnGenerate;
+        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.Button btnCheck;
+        private System.Windows.Forms.Button btnExit;
+        private System.Windows.Forms.ListBox lstWinningNumbers;
+        private System.Windows.Forms.Label lblResult;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Text = "樂透號碼產生器";
+
+            // Initialize number labels
+            this.lblNumber1 = new System.Windows.Forms.Label();
+            this.lblNumber2 = new System.Windows.Forms.Label();
+            this.lblNumber3 = new System.Windows.Forms.Label();
+            this.lblNumber4 = new System.Windows.Forms.Label();
+            this.lblNumber5 = new System.Windows.Forms.Label();
+            this.lblNumber6 = new System.Windows.Forms.Label();
+
+            System.Windows.Forms.Label[] allLabels = new System.Windows.Forms.Label[] {
+                this.lblNumber1, this.lblNumber2, this.lblNumber3,
+                this.lblNumber4, this.lblNumber5, this.lblNumber6 };
+
+            for (int i = 0; i < allLabels.Length; i++)
+            {
+                var lbl = allLabels[i];
+                lbl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+                lbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                lbl.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+                lbl.Size = new System.Drawing.Size(70, 70);
+                lbl.Location = new System.Drawing.Point(30 + i * 85, 20);
+                lbl.Text = "--";
+                this.Controls.Add(lbl);
+            }
+
+            // Generate button
+            this.btnGenerate = new System.Windows.Forms.Button();
+            this.btnGenerate.Text = "產生號碼";
+            this.btnGenerate.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnGenerate.Size = new System.Drawing.Size(120, 40);
+            this.btnGenerate.Location = new System.Drawing.Point(30, 110);
+            this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
+            this.Controls.Add(this.btnGenerate);
+
+            // Load button
+            this.btnLoad = new System.Windows.Forms.Button();
+            this.btnLoad.Text = "讀取開獎號碼";
+            this.btnLoad.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnLoad.Size = new System.Drawing.Size(140, 40);
+            this.btnLoad.Location = new System.Drawing.Point(170, 110);
+            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            this.Controls.Add(this.btnLoad);
+
+            // Check button
+            this.btnCheck = new System.Windows.Forms.Button();
+            this.btnCheck.Text = "比對中獎";
+            this.btnCheck.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnCheck.Size = new System.Drawing.Size(120, 40);
+            this.btnCheck.Location = new System.Drawing.Point(330, 110);
+            this.btnCheck.Click += new System.EventHandler(this.btnCheck_Click);
+            this.Controls.Add(this.btnCheck);
+
+            // Exit button
+            this.btnExit = new System.Windows.Forms.Button();
+            this.btnExit.Text = "離開";
+            this.btnExit.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnExit.Size = new System.Drawing.Size(120, 40);
+            this.btnExit.Location = new System.Drawing.Point(470, 110);
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            this.Controls.Add(this.btnExit);
+
+            // ListBox for winning numbers
+            this.lstWinningNumbers = new System.Windows.Forms.ListBox();
+            this.lstWinningNumbers.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lstWinningNumbers.Size = new System.Drawing.Size(360, 200);
+            this.lstWinningNumbers.Location = new System.Drawing.Point(30, 170);
+            this.lstWinningNumbers.DoubleClick += new System.EventHandler(this.lstWinningNumbers_DoubleClick);
+            this.Controls.Add(this.lstWinningNumbers);
+
+            // Result label
+            this.lblResult = new System.Windows.Forms.Label();
+            this.lblResult.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblResult.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblResult.Size = new System.Drawing.Size(360, 200);
+            this.lblResult.Location = new System.Drawing.Point(410, 170);
+            this.lblResult.Text = "中獎比對結果";
+            this.lblResult.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.Controls.Add(this.lblResult);
+
+            // OpenFileDialog
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.openFileDialog1.Filter = "Text Files|*.txt|All Files|*.*";
+            this.openFileDialog1.Title = "選擇開獎號碼檔案";
+
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+
+        #endregion
+    }
+}
