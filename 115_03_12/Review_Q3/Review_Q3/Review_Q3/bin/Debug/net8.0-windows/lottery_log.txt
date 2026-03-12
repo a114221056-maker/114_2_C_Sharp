@@ -1,0 +1,4 @@
+Lottery Load Log
+Created on: 2026/3/12 下午 02:53:36
+Loaded file: C:\Users\m303\Downloads\1234.txt at 2026/3/12 下午 02:53:36
+Total lines: 5

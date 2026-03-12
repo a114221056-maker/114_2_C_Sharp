@@ -1,0 +1,99 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace Review_Q3
+{
+    public partial class Form1 : Form
+    {
+        private Random rng = new Random();
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void btnGenerate_Click(object sender, EventArgs e)
+        {
+            var nums = GenerateNumbers(5, 1, 49);
+            lblNum1.Text = nums[0].ToString();
+            lblNum2.Text = nums[1].ToString();
+            lblNum3.Text = nums[2].ToString();
+            lblNum4.Text = nums[3].ToString();
+            lblNum5.Text = nums[4].ToString();
+
+            lblGeneratedNumbersDisplay.Text = string.Join(" ", nums);
+
+            CompareWithLoaded(nums);
+        }
+
+        private void btnLoad_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var lines = File.ReadAllLines(ofd.FileName);
+                        lstWinningNumbers.Items.Clear();
+                        foreach (var line in lines)
+                        {
+                            if (!string.IsNullOrWhiteSpace(line))
+                                lstWinningNumbers.Items.Add(line.Trim());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("讀取檔案失敗: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private List<int> GenerateNumbers(int count, int min, int max)
+        {
+            var set = new SortedSet<int>();
+            while (set.Count < count)
+            {
+                set.Add(rng.Next(min, max + 1));
+            }
+            return set.ToList();
+        }
+
+        private void CompareWithLoaded(List<int> nums)
+        {
+            if (lstWinningNumbers.Items.Count == 0)
+            {
+                lblMatchResult.Text = "尚未載入開獎號碼檔案";
+                return;
+            }
+
+            var results = new List<string>();
+            for (int i = 0; i < lstWinningNumbers.Items.Count; i++)
+            {
+                var line = lstWinningNumbers.Items[i].ToString();
+                // assume numbers separated by space or comma
+                var parts = line.Split(new[] { ' ', ',', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                var ints = new List<int>();
+                foreach (var p in parts)
+                {
+                    if (int.TryParse(p, out int v)) ints.Add(v);
+                }
+
+                int matchCount = nums.Intersect(ints).Count();
+                results.Add($"第 {i + 1} 組: 中 {matchCount} 個 ({string.Join(",", nums.Intersect(ints))})");
+            }
+
+            lblMatchResult.Text = string.Join(Environment.NewLine + Environment.NewLine, results);
+        }
+    }
+}

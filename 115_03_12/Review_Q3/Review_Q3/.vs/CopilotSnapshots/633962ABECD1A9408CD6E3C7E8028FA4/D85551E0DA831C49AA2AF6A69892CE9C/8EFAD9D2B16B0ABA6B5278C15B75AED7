@@ -1,0 +1,186 @@
+﻿namespace Review_Q3
+{
+    partial class Form1
+    {
+        /// <summary>
+        ///  Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        private System.Windows.Forms.Panel topPanel;
+        private System.Windows.Forms.Label lblNum1;
+        private System.Windows.Forms.Label lblNum2;
+        private System.Windows.Forms.Label lblNum3;
+        private System.Windows.Forms.Label lblNum4;
+        private System.Windows.Forms.Label lblNum5;
+        private System.Windows.Forms.Button btnGenerate;
+        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.Button btnExit;
+        private System.Windows.Forms.ListBox listBoxLottery;
+        private System.Windows.Forms.Label labelResult;
+
+        /// <summary>
+        ///  Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        ///  Required method for Designer support - do not modify
+        ///  the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            topPanel = new System.Windows.Forms.Panel();
+            lblNum1 = new System.Windows.Forms.Label();
+            lblNum2 = new System.Windows.Forms.Label();
+            lblNum3 = new System.Windows.Forms.Label();
+            lblNum4 = new System.Windows.Forms.Label();
+            lblNum5 = new System.Windows.Forms.Label();
+            btnGenerate = new System.Windows.Forms.Button();
+            btnLoad = new System.Windows.Forms.Button();
+            btnExit = new System.Windows.Forms.Button();
+            listBoxLottery = new System.Windows.Forms.ListBox();
+            labelResult = new System.Windows.Forms.Label();
+            topPanel.SuspendLayout();
+            SuspendLayout();
+            // 
+            // topPanel
+            // 
+            topPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            topPanel.Controls.Add(lblNum1);
+            topPanel.Controls.Add(lblNum2);
+            topPanel.Controls.Add(lblNum3);
+            topPanel.Controls.Add(lblNum4);
+            topPanel.Controls.Add(lblNum5);
+            topPanel.Location = new System.Drawing.Point(20, 20);
+            topPanel.Name = "topPanel";
+            topPanel.Size = new System.Drawing.Size(540, 120);
+            topPanel.TabIndex = 0;
+            // 
+            // lblNum1
+            // 
+            lblNum1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            lblNum1.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            lblNum1.Location = new System.Drawing.Point(10, 15);
+            lblNum1.Name = "lblNum1";
+            lblNum1.Size = new System.Drawing.Size(80, 80);
+            lblNum1.TabIndex = 0;
+            lblNum1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblNum2
+            // 
+            lblNum2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            lblNum2.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            lblNum2.Location = new System.Drawing.Point(110, 15);
+            lblNum2.Name = "lblNum2";
+            lblNum2.Size = new System.Drawing.Size(80, 80);
+            lblNum2.TabIndex = 1;
+            lblNum2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblNum3
+            // 
+            lblNum3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            lblNum3.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            lblNum3.Location = new System.Drawing.Point(210, 15);
+            lblNum3.Name = "lblNum3";
+            lblNum3.Size = new System.Drawing.Size(80, 80);
+            lblNum3.TabIndex = 2;
+            lblNum3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblNum4
+            // 
+            lblNum4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            lblNum4.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            lblNum4.Location = new System.Drawing.Point(310, 15);
+            lblNum4.Name = "lblNum4";
+            lblNum4.Size = new System.Drawing.Size(80, 80);
+            lblNum4.TabIndex = 3;
+            lblNum4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblNum5
+            // 
+            lblNum5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            lblNum5.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            lblNum5.Location = new System.Drawing.Point(410, 15);
+            lblNum5.Name = "lblNum5";
+            lblNum5.Size = new System.Drawing.Size(80, 80);
+            lblNum5.TabIndex = 4;
+            lblNum5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnGenerate
+            // 
+            btnGenerate.Enabled = false;
+            btnGenerate.Location = new System.Drawing.Point(140, 160);
+            btnGenerate.Name = "btnGenerate";
+            btnGenerate.Size = new System.Drawing.Size(120, 50);
+            btnGenerate.TabIndex = 1;
+            btnGenerate.Text = "產生號碼";
+            btnGenerate.Visible = false;
+            btnGenerate.Click += btnGenerate_Click;
+            // 
+            // btnLoad
+            // 
+            btnLoad.Location = new System.Drawing.Point(300, 160);
+            btnLoad.Name = "btnLoad";
+            btnLoad.Size = new System.Drawing.Size(120, 50);
+            btnLoad.TabIndex = 2;
+            btnLoad.Text = "開獎號碼";
+            btnLoad.Click += btnLoad_Click;
+            // 
+            // btnExit
+            // 
+            btnExit.Location = new System.Drawing.Point(460, 160);
+            btnExit.Name = "btnExit";
+            btnExit.Size = new System.Drawing.Size(120, 50);
+            btnExit.TabIndex = 3;
+            btnExit.Text = "離開";
+            btnExit.Click += btnExit_Click;
+            // 
+            // listBoxLottery
+            // 
+            listBoxLottery.FormattingEnabled = true;
+            listBoxLottery.Location = new System.Drawing.Point(20, 240);
+            listBoxLottery.Name = "listBoxLottery";
+            listBoxLottery.Size = new System.Drawing.Size(420, 220);
+            listBoxLottery.TabIndex = 4;
+            // 
+            // labelResult
+            // 
+            labelResult.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            labelResult.Font = new System.Drawing.Font("Segoe UI", 10F);
+            labelResult.Location = new System.Drawing.Point(460, 240);
+            labelResult.Name = "labelResult";
+            labelResult.Size = new System.Drawing.Size(400, 220);
+            labelResult.TabIndex = 5;
+            labelResult.Text = "中獎比對結果";
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new System.Drawing.SizeF(11F, 23F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(900, 500);
+            Controls.Add(topPanel);
+            Controls.Add(btnGenerate);
+            Controls.Add(btnLoad);
+            Controls.Add(btnExit);
+            Controls.Add(listBoxLottery);
+            Controls.Add(labelResult);
+            Name = "Form1";
+            Text = "樂透號碼產生器";
+            topPanel.ResumeLayout(false);
+            ResumeLayout(false);
+        }
+
+        #endregion
+    }
+}

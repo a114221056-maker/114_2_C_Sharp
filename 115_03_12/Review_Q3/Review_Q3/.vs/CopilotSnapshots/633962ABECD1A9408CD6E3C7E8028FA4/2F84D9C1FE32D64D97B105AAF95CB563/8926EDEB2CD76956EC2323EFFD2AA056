@@ -1,0 +1,166 @@
+﻿namespace Review_Q3
+{
+    partial class Form1
+    {
+        /// <summary>
+        ///  Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        private System.Windows.Forms.Panel topPanel;
+        private System.Windows.Forms.Label lblNum1;
+        private System.Windows.Forms.Label lblNum2;
+        private System.Windows.Forms.Label lblNum3;
+        private System.Windows.Forms.Label lblNum4;
+        private System.Windows.Forms.Label lblNum5;
+        private System.Windows.Forms.Button btnGenerate;
+        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.Button btnExit;
+        private System.Windows.Forms.ListBox lstWinningNumbers;
+        private System.Windows.Forms.Label lblMatchResult;
+        private System.Windows.Forms.Label lblGeneratedNumbersDisplay;
+
+        /// <summary>
+        ///  Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        ///  Required method for Designer support - do not modify
+        ///  the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(900, 500);
+            this.Name = "Form1";
+            this.Text = "樂透號碼產生器";
+
+            // top panel to hold number boxes
+            this.topPanel = new System.Windows.Forms.Panel();
+            this.topPanel.Location = new System.Drawing.Point(20, 20);
+            this.topPanel.Size = new System.Drawing.Size(500, 110);
+            this.topPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.topPanel.SuspendLayout();
+            this.Controls.Add(this.topPanel);
+
+            // number labels
+            this.lblNum1 = new System.Windows.Forms.Label();
+            this.lblNum2 = new System.Windows.Forms.Label();
+            this.lblNum3 = new System.Windows.Forms.Label();
+            this.lblNum4 = new System.Windows.Forms.Label();
+            this.lblNum5 = new System.Windows.Forms.Label();
+
+            System.Drawing.Size numSize = new System.Drawing.Size(80, 80);
+            int startX = 10;
+            int gap = 20;
+
+            // Configure each number label explicitly (designer-friendly)
+            this.lblNum1.Size = numSize;
+            this.lblNum1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblNum1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblNum1.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.lblNum1.Location = new System.Drawing.Point(startX + 0 * (numSize.Width + gap), 10);
+            this.lblNum1.Text = "";
+            this.topPanel.Controls.Add(this.lblNum1);
+
+            this.lblNum2.Size = numSize;
+            this.lblNum2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblNum2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblNum2.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.lblNum2.Location = new System.Drawing.Point(startX + 1 * (numSize.Width + gap), 10);
+            this.lblNum2.Text = "";
+            this.topPanel.Controls.Add(this.lblNum2);
+
+            this.lblNum3.Size = numSize;
+            this.lblNum3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblNum3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblNum3.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.lblNum3.Location = new System.Drawing.Point(startX + 2 * (numSize.Width + gap), 10);
+            this.lblNum3.Text = "";
+            this.topPanel.Controls.Add(this.lblNum3);
+
+            this.lblNum4.Size = numSize;
+            this.lblNum4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblNum4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblNum4.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.lblNum4.Location = new System.Drawing.Point(startX + 3 * (numSize.Width + gap), 10);
+            this.lblNum4.Text = "";
+            this.topPanel.Controls.Add(this.lblNum4);
+
+            this.lblNum5.Size = numSize;
+            this.lblNum5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblNum5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblNum5.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.lblNum5.Location = new System.Drawing.Point(startX + 4 * (numSize.Width + gap), 10);
+            this.lblNum5.Text = "";
+            this.topPanel.Controls.Add(this.lblNum5);
+
+            this.topPanel.ResumeLayout(false);
+
+            // buttons
+            this.btnGenerate = new System.Windows.Forms.Button();
+            this.btnGenerate.Text = "產生號碼";
+            this.btnGenerate.Size = new System.Drawing.Size(120, 50);
+            this.btnGenerate.Location = new System.Drawing.Point(50, 150);
+            this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
+            this.Controls.Add(this.btnGenerate);
+
+            this.btnLoad = new System.Windows.Forms.Button();
+            this.btnLoad.Text = "開獎號碼";
+            this.btnLoad.Size = new System.Drawing.Size(120, 50);
+            this.btnLoad.Location = new System.Drawing.Point(200, 150);
+            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            this.Controls.Add(this.btnLoad);
+
+            this.btnExit = new System.Windows.Forms.Button();
+            this.btnExit.Text = "離開";
+            this.btnExit.Size = new System.Drawing.Size(120, 50);
+            this.btnExit.Location = new System.Drawing.Point(350, 150);
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            this.Controls.Add(this.btnExit);
+
+            // listbox for loaded winning numbers
+            this.lstWinningNumbers = new System.Windows.Forms.ListBox();
+            this.lstWinningNumbers.Location = new System.Drawing.Point(20, 220);
+            this.lstWinningNumbers.Size = new System.Drawing.Size(420, 220);
+            this.Controls.Add(this.lstWinningNumbers);
+
+            // label to show comparison result
+            this.lblMatchResult = new System.Windows.Forms.Label();
+            this.lblMatchResult.Location = new System.Drawing.Point(460, 220);
+            this.lblMatchResult.Size = new System.Drawing.Size(400, 220);
+            this.lblMatchResult.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblMatchResult.Text = "中獎比對結果";
+            this.lblMatchResult.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.Controls.Add(this.lblMatchResult);
+
+            // generated numbers display on right
+            this.lblGeneratedNumbersDisplay = new System.Windows.Forms.Label();
+            this.lblGeneratedNumbersDisplay.Location = new System.Drawing.Point(560, 20);
+            this.lblGeneratedNumbersDisplay.Size = new System.Drawing.Size(300, 80);
+            this.lblGeneratedNumbersDisplay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblGeneratedNumbersDisplay.Text = "顯示亂數產生的號碼";
+            this.lblGeneratedNumbersDisplay.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblGeneratedNumbersDisplay.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.Controls.Add(this.lblGeneratedNumbersDisplay);
+
+            this.ResumeLayout(false);
+        }
+
+        #endregion
+    }
+}

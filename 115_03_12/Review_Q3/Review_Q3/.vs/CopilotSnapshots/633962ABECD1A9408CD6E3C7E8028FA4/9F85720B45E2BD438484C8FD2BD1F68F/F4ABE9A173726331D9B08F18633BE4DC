@@ -1,0 +1,170 @@
+﻿using System;
+using System.IO;
+using System.Windows.Forms;
+
+namespace Review_Q3
+{
+    public partial class Form1 : Form
+    {
+        private Random rng = new Random();
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        // 開獎號碼按鈕事件: 使用 OpenFileDialog + StreamReader 讀取檔案，輸出到 listBoxLottery
+        private void btnLoad_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    StreamReader sr = new StreamReader(ofd.FileName);
+                    listBoxLottery.Items.Clear();
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        if (line != null && line.Trim() != "")
+                        {
+                            listBoxLottery.Items.Add(line.Trim());
+                        }
+                    }
+                    sr.Close();
+
+                    // 讀取完畢啟用 產生號碼 按鈕
+                    btnGenerate.Visible = true;
+                    btnGenerate.Enabled = true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("讀取檔案失敗: " + ex.Message);
+                }
+            }
+        }
+
+        // 產生號碼按鈕事件: 產生不重複亂數（存放於陣列），顯示於介面，並比對開獎號碼，輸出至 labelResult
+        private void btnGenerate_Click(object sender, EventArgs e)
+        {
+            // 產生 5 個不重複號碼，範圍 1~49
+            int[] nums = new int[5];
+            int count = 0;
+            while (count < 5)
+            {
+                int v = rng.Next(1, 50); // 1..49
+                bool exists = false;
+                for (int i = 0; i < count; i++)
+                {
+                    if (nums[i] == v)
+                    {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists)
+                {
+                    nums[count] = v;
+                    count++;
+                }
+            }
+
+            // 顯示在介面上的五個 Label
+            lblNum1.Text = nums[0].ToString();
+            lblNum2.Text = nums[1].ToString();
+            lblNum3.Text = nums[2].ToString();
+            lblNum4.Text = nums[3].ToString();
+            lblNum5.Text = nums[4].ToString();
+
+            // 比對每一組開獎號碼並輸出結果
+            if (listBoxLottery.Items.Count == 0)
+            {
+                labelResult.Text = "尚未載入開獎號碼檔案";
+                return;
+            }
+
+            string fullResult = "";
+            for (int i = 0; i < listBoxLottery.Items.Count; i++)
+            {
+                string line = listBoxLottery.Items[i].ToString();
+                // 解析檔案中該行的號碼，支援空格或逗號分隔
+                string[] parts = line.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                int[] drawNums = new int[parts.Length];
+                int dnCount = 0;
+                for (int j = 0; j < parts.Length; j++)
+                {
+                    int parsed = 0;
+                    if (int.TryParse(parts[j], out parsed))
+                    {
+                        drawNums[dnCount] = parsed;
+                        dnCount++;
+                    }
+                }
+                // 若 dnCount 小於 parts.Length，調整陣列大小
+                if (dnCount != drawNums.Length)
+                {
+                    int[] tmp = new int[dnCount];
+                    for (int k = 0; k < dnCount; k++) tmp[k] = drawNums[k];
+                    drawNums = tmp;
+                }
+
+                // 比對 nums 與 drawNums
+                int matchCount = CompareNumbers(nums, drawNums);
+                string prize = GetPrizeByMatchCount(matchCount);
+
+                // 找出中獎的號碼列表
+                string matchedNumbers = "";
+                for (int a = 0; a < nums.Length; a++)
+                {
+                    for (int b = 0; b < drawNums.Length; b++)
+                    {
+                        if (nums[a] == drawNums[b])
+                        {
+                            if (matchedNumbers != "") matchedNumbers += ",";
+                            matchedNumbers += nums[a].ToString();
+                        }
+                    }
+                }
+
+                fullResult += "第 " + (i + 1).ToString() + " 組: 中 " + matchCount.ToString() + " 個 (" + matchedNumbers + ") => " + prize;
+                if (i < listBoxLottery.Items.Count - 1) fullResult += "\n\n";
+            }
+
+            labelResult.Text = fullResult;
+        }
+
+        // 離開按鈕事件
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        // i號碼比對方法: 計算兩個陣列中相同的數字個數
+        private int CompareNumbers(int[] userNums, int[] drawNums)
+        {
+            int matches = 0;
+            for (int i = 0; i < userNums.Length; i++)
+            {
+                for (int j = 0; j < drawNums.Length; j++)
+                {
+                    if (userNums[i] == drawNums[j])
+                    {
+                        matches++;
+                    }
+                }
+            }
+            return matches;
+        }
+
+        // 根據中獎數量判定獎項等級（簡單示範）
+        private string GetPrizeByMatchCount(int matchCount)
+        {
+            if (matchCount >= 5) return "頭獎";
+            if (matchCount == 4) return "貳獎";
+            if (matchCount == 3) return "參獎";
+            return "未中獎";
+        }
+    }
+}
