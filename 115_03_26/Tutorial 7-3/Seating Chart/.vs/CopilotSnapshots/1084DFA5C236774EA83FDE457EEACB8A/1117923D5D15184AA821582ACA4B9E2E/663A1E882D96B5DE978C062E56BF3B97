@@ -1,0 +1,90 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Seating_Chart
+{
+    public partial class Form1 : Form
+    {
+        /*
+         詳細計畫 (逐步偽程式):
+         1. 定義座位價格的二維陣列 (6 行 x 4 列)，以 decimal 表示各座位票價。
+         2. 定義常數 ROWS 與 COLS，並且設定與陣列維度一致，避免未使用警告。
+         3. 在 displayPriceButton_Click 事件中:
+            a. 嘗試將 rowTextBox.Text 解析為整數 row，若失敗則顯示錯誤訊息並返回。
+            b. 嘗試將 colTextBox.Text 解析為整數 col，若失敗則顯示錯誤訊息並返回。
+            c. 驗證 row 與 col 是否在有效範圍 (1..ROWS, 1..COLS)，若不在範圍內顯示錯誤並返回。
+            d. 使用使用者輸入的 1-based 索引 (減 1) 存取 seatPrices，取得對應票價。
+            e. 將票價格式化並顯示給使用者 (使用 MessageBox.Show)。也保留可修改的註解，若表單上有 Label 可改為設定 Label.Text。
+         4. 修正括號以確保語法正確並消除 CS1513 錯誤。
+        */
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void displayPriceButton_Click(object sender, EventArgs e)
+        {
+            // 陣列有 6 行、4 列 (與原始資料一致)
+            const int ROWS = 6;
+            const int COLS = 4;
+
+            decimal[,] seatPrices = {
+                {450m, 450m, 450m, 450m},
+                {425m, 425m, 425m, 425m},
+                {400m, 400m, 400m, 400m},
+                {375m, 375m, 375m, 375m},
+                {375m, 375m, 375m, 375m},
+                {350m, 350m, 350m, 350m}
+            };
+
+            // 宣告變數以儲存解析結果
+            int row;
+            int col;
+
+            // 解析列（從 rowTextBox 讀取)
+            if(!int.TryParse(rowTextBox.Text, out row))
+            {
+                MessageBox.Show("請輸入有效的列號（整數）。", "輸入錯誤",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 解析欄（從 colTextBox 讀取）
+            if (!int.TryParse(colTextBox.Text, out col))
+            {
+                MessageBox.Show("請輸入有效的欄號（整數）。", "輸入錯誤",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 檢查範圍（假設使用者輸入為 1-based）
+            if (row < 1 || row > ROWS || col < 1 || col > COLS)
+            {
+                MessageBox.Show($"列號必須在 1 到 {ROWS} 之間，欄號必須在 1 到 {COLS} 之間。", "範圍錯誤",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 取得票價（將 1-based 轉為 0-based）
+            decimal price = seatPrices[row - 1, col - 1];
+
+            // 顯示票價（若表單上有顯示元件，可改為設定其 Text 屬性）
+            MessageBox.Show($"座位 (列 {row}, 欄 {col}) 的票價為 {price:C}", "票價",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void exitButton_Click(object sender, EventArgs e)
+        {
+            // Close the form.
+            this.Close();
+        }
+    }
+}

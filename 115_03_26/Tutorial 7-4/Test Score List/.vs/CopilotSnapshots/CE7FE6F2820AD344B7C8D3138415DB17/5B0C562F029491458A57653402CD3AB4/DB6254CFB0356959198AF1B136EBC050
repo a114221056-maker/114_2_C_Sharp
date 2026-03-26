@@ -1,0 +1,175 @@
+﻿namespace Test_Score_List
+{
+    partial class Form1
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.testScoresListBox = new System.Windows.Forms.ListBox();
+            this.avgScoreDescriptionLabel = new System.Windows.Forms.Label();
+            this.aboveAvgDescriptionLabel = new System.Windows.Forms.Label();
+            this.belowAvgDescriptionLabel = new System.Windows.Forms.Label();
+            this.averageLabel = new System.Windows.Forms.Label();
+            this.aboveAverageLabel = new System.Windows.Forms.Label();
+            this.belowAverageLabel = new System.Windows.Forms.Label();
+            this.getScoresButton = new System.Windows.Forms.Button();
+            this.exitButton = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // 全域字型設定：設定表單的預設字型為 18pt，讓所有子控制項繼承此字型
+            // 這樣可以統一字體大小，並只需調整各控制項的大小與間距
+            // 
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            
+            // 
+            // testScoresListBox
+            // 列表框用於顯示多筆成績清單，調整大小讓使用者能清楚閱讀且與右方統計欄位保持適當間距
+            // 
+            this.testScoresListBox.FormattingEnabled = true;
+            this.testScoresListBox.ItemHeight = 29;
+            this.testScoresListBox.Location = new System.Drawing.Point(12, 12);
+            this.testScoresListBox.Name = "testScoresListBox";
+            this.testScoresListBox.Size = new System.Drawing.Size(220, 235);
+            this.testScoresListBox.TabIndex = 0;
+            // 
+            // avgScoreDescriptionLabel
+            // 此標籤說明下方顯示框的用途：顯示平均成績
+            // 
+            this.avgScoreDescriptionLabel.AutoSize = true;
+            this.avgScoreDescriptionLabel.Location = new System.Drawing.Point(250, 20);
+            this.avgScoreDescriptionLabel.Name = "avgScoreDescriptionLabel";
+            this.avgScoreDescriptionLabel.Size = new System.Drawing.Size(150, 29);
+            this.avgScoreDescriptionLabel.TabIndex = 1;
+            this.avgScoreDescriptionLabel.Text = "平均成績：";
+            // 
+            // aboveAvgDescriptionLabel
+            // 說明高於平均之成績數量
+            // 
+            this.aboveAvgDescriptionLabel.AutoSize = true;
+            this.aboveAvgDescriptionLabel.Location = new System.Drawing.Point(250, 80);
+            this.aboveAvgDescriptionLabel.Name = "aboveAvgDescriptionLabel";
+            this.aboveAvgDescriptionLabel.Size = new System.Drawing.Size(200, 29);
+            this.aboveAvgDescriptionLabel.TabIndex = 2;
+            this.aboveAvgDescriptionLabel.Text = "高於平均的人數：";
+            // 
+            // belowAvgDescriptionLabel
+            // 說明低於平均之成績數量
+            // 
+            this.belowAvgDescriptionLabel.AutoSize = true;
+            this.belowAvgDescriptionLabel.Location = new System.Drawing.Point(250, 140);
+            this.belowAvgDescriptionLabel.Name = "belowAvgDescriptionLabel";
+            this.belowAvgDescriptionLabel.Size = new System.Drawing.Size(200, 29);
+            this.belowAvgDescriptionLabel.TabIndex = 3;
+            this.belowAvgDescriptionLabel.Text = "低於平均的人數：";
+            // 
+            // averageLabel
+            // 以有框的標籤顯示計算出的平均值，置中對齊以便於閱讀
+            // 
+            this.averageLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.averageLabel.Location = new System.Drawing.Point(460, 16);
+            this.averageLabel.Name = "averageLabel";
+            this.averageLabel.Size = new System.Drawing.Size(140, 34);
+            this.averageLabel.TabIndex = 4;
+            this.averageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // aboveAverageLabel
+            // 顯示高於平均的人數
+            // 
+            this.aboveAverageLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.aboveAverageLabel.Location = new System.Drawing.Point(460, 76);
+            this.aboveAverageLabel.Name = "aboveAverageLabel";
+            this.aboveAverageLabel.Size = new System.Drawing.Size(140, 34);
+            this.aboveAverageLabel.TabIndex = 5;
+            this.aboveAverageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // belowAverageLabel
+            // 顯示低於平均的人數
+            // 
+            this.belowAverageLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.belowAverageLabel.Location = new System.Drawing.Point(460, 136);
+            this.belowAverageLabel.Name = "belowAverageLabel";
+            this.belowAverageLabel.Size = new System.Drawing.Size(140, 34);
+            this.belowAverageLabel.TabIndex = 6;
+            this.belowAverageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // getScoresButton
+            // 取得分數按鈕：點擊後載入或計算成績與統計資訊
+            // 
+            this.getScoresButton.Location = new System.Drawing.Point(150, 260);
+            this.getScoresButton.Name = "getScoresButton";
+            this.getScoresButton.Size = new System.Drawing.Size(160, 45);
+            this.getScoresButton.TabIndex = 7;
+            this.getScoresButton.Text = "取得分數";
+            this.getScoresButton.UseVisualStyleBackColor = true;
+            this.getScoresButton.Click += new System.EventHandler(this.getScoresButton_Click);
+            // 
+            // exitButton
+            // 離開按鈕：關閉表單
+            // 
+            this.exitButton.Location = new System.Drawing.Point(330, 260);
+            this.exitButton.Name = "exitButton";
+            this.exitButton.Size = new System.Drawing.Size(160, 45);
+            this.exitButton.TabIndex = 8;
+            this.exitButton.Text = "離開";
+            this.exitButton.UseVisualStyleBackColor = true;
+            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
+            // 
+            // Form1
+            // 表單基本設定：設定表單標題為繁體中文，並調整視窗大小以容納新的字型與控制項配置
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(620, 330);
+            this.Controls.Add(this.exitButton);
+            this.Controls.Add(this.getScoresButton);
+            this.Controls.Add(this.belowAverageLabel);
+            this.Controls.Add(this.aboveAverageLabel);
+            this.Controls.Add(this.averageLabel);
+            this.Controls.Add(this.belowAvgDescriptionLabel);
+            this.Controls.Add(this.aboveAvgDescriptionLabel);
+            this.Controls.Add(this.avgScoreDescriptionLabel);
+            this.Controls.Add(this.testScoresListBox);
+            this.Name = "Form1";
+            this.Text = "成績清單";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.ListBox testScoresListBox;
+        private System.Windows.Forms.Label avgScoreDescriptionLabel;
+        private System.Windows.Forms.Label aboveAvgDescriptionLabel;
+        private System.Windows.Forms.Label belowAvgDescriptionLabel;
+        private System.Windows.Forms.Label averageLabel;
+        private System.Windows.Forms.Label aboveAverageLabel;
+        private System.Windows.Forms.Label belowAverageLabel;
+        private System.Windows.Forms.Button getScoresButton;
+        private System.Windows.Forms.Button exitButton;
+    }
+}
+
