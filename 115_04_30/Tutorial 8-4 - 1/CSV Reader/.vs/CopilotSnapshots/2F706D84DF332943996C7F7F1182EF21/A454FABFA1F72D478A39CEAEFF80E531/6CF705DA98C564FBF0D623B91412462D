@@ -1,0 +1,97 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+using System.Diagnostics;
+
+namespace CSV_Reader
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void getScoresButton_Click(object sender, EventArgs e)
+        {
+            // 清除舊資料，準備顯示新的平均數
+            this.averagesListBox.Items.Clear();
+
+            // 嘗試讀取名為 "Grade.csv" 的 CSV 檔案，計算每位學生三科成績的平均並顯示於清單
+            try
+            {
+                using (StreamReader inputFile = File.OpenText("Grade.csv"))
+                {
+                    char[] delim = { ',' };
+                    string line;
+
+                    double totalOfAverages = 0.0; // 用於計算全班平均（每位學生的平均的總和）
+                    int studentCount = 0;
+
+                    while ((line = inputFile.ReadLine()) != null)
+                    {
+                        // 以逗號分割欄位
+                        string[] fields = line.Split(delim);
+
+                        // 檢查欄位數量是否足夠（姓名 + 3 個成績）
+                        if (fields.Length >= 4)
+                        {
+                            double s1, s2, s3;
+                            // 嘗試解析三個成績欄位，若解析成功則計算平均
+                            if (double.TryParse(fields[1], out s1) &&
+                                double.TryParse(fields[2], out s2) &&
+                                double.TryParse(fields[3], out s3))
+                            {
+                                double average = (s1 + s2 + s3) / 3.0;
+                                this.averagesListBox.Items.Add($"{fields[0]} 的平均分數為 {average:F2}");
+
+                                totalOfAverages += average;
+                                studentCount++;
+                            }
+                            else
+                            {
+                                // 若成績格式有誤，將訊息加入清單以便使用者檢查
+                                this.averagesListBox.Items.Add($"{fields[0]} 的成績格式錯誤，無法計算平均值");
+                            }
+                        }
+                        else
+                        {
+                            // 欄位不足，記錄於清單
+                            this.averagesListBox.Items.Add("資料格式錯誤：欄位不足 - " + line);
+                        }
+                    }
+
+                    // 在讀取完所有學生後，若有至少一位學生則計算並顯示全班平均
+                    if (studentCount > 0)
+                    {
+                        double classAverage = totalOfAverages / studentCount;
+                        this.averagesListBox.Items.Add("---------------------------");
+                        this.averagesListBox.Items.Add($"全班平均分數為 {classAverage:F2}");
+                    }
+                    else
+                    {
+                        this.averagesListBox.Items.Add("沒有可計算平均值的學生成績。");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // 顯示繁體中文錯誤訊息
+                MessageBox.Show("發生錯誤：" + ex.Message);
+            }
+        }
+
+        // 結束按鈕事件：關閉表單
+        private void exitButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+    }
+}
