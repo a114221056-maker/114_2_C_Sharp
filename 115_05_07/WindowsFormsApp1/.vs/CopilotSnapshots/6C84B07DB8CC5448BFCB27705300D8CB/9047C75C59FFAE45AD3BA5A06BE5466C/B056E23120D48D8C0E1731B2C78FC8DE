@@ -1,0 +1,136 @@
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace WindowsFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        private decimal balance = 0m;
+        private decimal lastWinnings = 0m;
+        private readonly Random random = new Random();
+
+        // 統計
+        private int totalSpins = 0;
+        private int totalWins = 0;
+
+        public Form1()
+        {
+            InitializeComponent();
+            // 初始化顯示
+            UpdateDisplay();
+        }
+
+        // 存入（要求正整數）
+        private void button_deposit_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(textBox_deposit.Text, out int depositInt) && depositInt > 0)
+            {
+                balance += depositInt;
+                textBox_deposit.Clear();
+                UpdateDisplay();
+                MessageBox.Show($"存入 NT${depositInt:F2} 成功！", "存入確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("請輸入正整數金額", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        // 旋轉
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (balance <= 0m)
+            {
+                MessageBox.Show("餘額不足，請先存入金額", "餘額不足", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string betText = comboBox_bet.SelectedItem?.ToString() ?? "$1";
+            if (!decimal.TryParse(betText.TrimStart('$'), out decimal betAmount))
+            {
+                betAmount = 1m;
+            }
+
+            if (betAmount <= 0m)
+            {
+                MessageBox.Show("下注金額不正確", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (balance < betAmount)
+            {
+                MessageBox.Show("餘額不足，請選擇較小的下注金額", "餘額不足", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            balance -= betAmount;
+            lastWinnings = 0m;
+            totalSpins++;
+
+            // 模擬三個轉輪，0..9 共10種水果
+            int result1 = random.Next(0, 10);
+            int result2 = random.Next(0, 10);
+            int result3 = random.Next(0, 10);
+
+            DisplayResult(result1, pictureBox1);
+            DisplayResult(result2, pictureBox2);
+            DisplayResult(result3, pictureBox3);
+
+            // 計算獲勝
+            if (result1 == result2 && result2 == result3)
+            {
+                lastWinnings = betAmount * 10m; // 三個相同 x10
+                totalWins++;
+            }
+            else if (result1 == result2 || result2 == result3 || result1 == result3)
+            {
+                lastWinnings = betAmount * 3m; // 任二相同 x3
+                totalWins++;
+            }
+
+            balance += lastWinnings;
+            UpdateDisplay();
+        }
+
+        private void DisplayResult(int index, PictureBox pictureBox)
+        {
+            if (imageList1 != null && imageList1.Images.Count > index)
+            {
+                pictureBox.Image = imageList1.Images[index];
+                pictureBox.BackColor = Color.Transparent;
+            }
+            else
+            {
+                pictureBox.Image = null;
+                pictureBox.BackColor = Color.Khaki;
+            }
+            pictureBox.Refresh();
+        }
+
+        private void UpdateDisplay()
+        {
+            UpdateBalanceLabel();
+            UpdateStatistics();
+        }
+
+        private void UpdateBalanceLabel()
+        {
+            label_balance.Text = $"餘額：NT${balance:F2}";
+            label_lastWin.Text = $"本次獲得：NT${lastWinnings:F2}";
+        }
+
+        private void UpdateStatistics()
+        {
+            label_totalSpins.Text = $"累計旋轉：{totalSpins}次";
+            label_winCount.Text = $"累計中獎：{totalWins}次";
+            double winRate = totalSpins > 0 ? (double)totalWins / totalSpins * 100.0 : 0.0;
+            label_winRate.Text = $"勝率：{winRate:F2}%";
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+    }
+}
