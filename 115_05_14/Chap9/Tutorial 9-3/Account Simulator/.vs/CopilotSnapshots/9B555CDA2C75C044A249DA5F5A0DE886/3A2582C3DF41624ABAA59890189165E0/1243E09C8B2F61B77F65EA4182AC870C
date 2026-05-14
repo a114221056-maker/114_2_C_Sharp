@@ -1,0 +1,80 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Account_Simulator
+{
+    class BankAccount
+    {
+       private decimal balance;
+        /// <summary>
+        /// 取得帳戶目前餘額。
+        /// 以唯讀屬性公開，外部無法直接修改內部欄位。
+        /// </summary>
+        public decimal Balance
+        {
+            get { return balance; }
+        }
+        /// <summary>
+        /// 建構子：使用指定的初始餘額建立帳戶。
+        /// </summary>
+        /// <param name="initialBalance">帳戶的初始餘額（十進位）。</param>
+        public BankAccount(decimal initialBalance)
+        {
+            balance = initialBalance;
+        }
+        /// <summary>
+        /// 存款方法：將指定金額加入帳戶餘額。
+        /// 若金額為負數或零，將顯示警告訊息並忽略該操作。
+        /// </summary>
+        /// <param name="amount">要存入的金額。</param>
+        public void Deposit(decimal amount)
+        {
+            // 只接受正數的存款，若非正數則顯示訊息提示使用者
+            if (amount > 0m)
+            {
+                balance += amount;
+            }
+            else
+            {
+                // 顯示錯誤訊息給使用者（繁體中文）
+                MessageBox.Show("存款金額必須為正數。", "無效的存款", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+        /// <summary>
+        /// 提款方法：從帳戶餘額中扣除指定金額。
+        /// 僅在金額為正且不超過目前餘額時執行扣款，否則顯示相對的警告訊息。
+        /// </summary>
+        /// <param name="amount">要提取的金額。</param>
+        public void Withdraw(decimal amount)
+        {
+            // 只接受正數的提款，且不得超過目前餘額，若不合法則顯示訊息
+            if (amount > 0m)
+            {
+                if (amount <= balance)
+                {
+                    balance -= amount;
+                }
+                else
+                {
+                    MessageBox.Show("提款金額不得超過目前餘額。", "無效的提款", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("提款金額必須為正數。", "無效的提款", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+        /// <summary>
+        /// 取得目前帳戶餘額（等同於屬性 Balance）。
+        /// </summary>
+        /// <returns>傳回目前的帳戶餘額。</returns>
+        public decimal GetBalance()
+        {
+            return balance;
+        }
+    }
+}

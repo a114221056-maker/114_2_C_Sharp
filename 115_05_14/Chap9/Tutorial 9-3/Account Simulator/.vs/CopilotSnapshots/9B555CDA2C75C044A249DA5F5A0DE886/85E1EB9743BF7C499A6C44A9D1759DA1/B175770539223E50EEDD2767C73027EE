@@ -1,0 +1,37 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Account_Simulator
+{
+    class BankAccount
+    {
+       private decimal balance;
+        public BankAccount(decimal initialBalance)
+        {
+            balance = initialBalance;
+        }
+        public void Deposit(decimal amount)
+        {
+            // 只接受正數的存款，若非正數則忽略
+            if (amount > 0m)
+            {
+                balance += amount;
+            }
+        }
+        public void Withdraw(decimal amount)
+        {
+            // 只接受正數的提款，且不得超過目前餘額，否則忽略
+            if (amount > 0m && amount <= balance)
+            {
+                balance -= amount;
+            }
+        }
+        public decimal GetBalance()
+        {
+            return balance;
+        }
+    }
+}

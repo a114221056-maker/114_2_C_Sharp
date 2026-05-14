@@ -1,0 +1,35 @@
+using System;
+
+namespace Coin_Toss
+{
+    public class Coin
+    {
+        // 每個 Coin 實例使用自己的 Random 實例
+        private Random rand = new Random();
+
+        private string sideUp; // 儲存目前朝上的面
+
+        public Coin() // 建構子，設定初始值
+        {
+            sideUp = "Heads"; // 預設為正面朝上
+        }
+
+        public void Toss()
+        {
+            int side = rand.Next(2);
+            if (side == 0)
+            {
+                sideUp = "Heads";
+            }
+            else
+            {
+                sideUp = "Tails";
+            }
+        }
+
+        public string GetSideUp()
+        {
+            return sideUp;
+        }
+    }
+}

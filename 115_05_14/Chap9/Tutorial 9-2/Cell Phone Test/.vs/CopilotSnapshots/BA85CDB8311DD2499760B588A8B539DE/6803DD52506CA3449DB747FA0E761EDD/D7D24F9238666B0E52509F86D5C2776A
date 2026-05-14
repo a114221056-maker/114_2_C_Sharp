@@ -1,0 +1,62 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Globalization;
+
+namespace Cell_Phone_Test
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        // GetPhoneData 方法接受一個 CellPhone 物件作為參數。
+        // 此方法會將使用者在表單中輸入的資料指派到該物件的屬性。
+        private void GetPhoneData(CellPhone phone)
+        {
+            // 從表單的文字方塊讀取使用者輸入，並指定給 CellPhone 物件的屬性。
+            // 針對價格欄位，嘗試解析為 decimal；若解析失敗，預設為 0。
+            phone.Brand = this.brandTextBox.Text;
+            phone.Model = this.modelTextBox.Text;
+
+            decimal parsedPrice = 0m;
+            // 使用當地文化來解析數字（允許貨幣與數字格式）
+            if (!decimal.TryParse(this.priceTextBox.Text, NumberStyles.Currency | NumberStyles.Number, CultureInfo.CurrentCulture, out parsedPrice))
+            {
+                // 若解析失敗，嘗試去除常見貨幣符號再解析一次
+                var cleaned = this.priceTextBox.Text.Replace("$", "").Replace("€", "").Replace(",", "");
+                decimal.TryParse(cleaned, NumberStyles.Number, CultureInfo.CurrentCulture, out parsedPrice);
+            }
+
+            phone.Price = parsedPrice;
+
+            // 在輸出標籤中顯示物件的屬性
+            this.brandLabel.Text = phone.Brand;
+            this.modelLabel.Text = phone.Model;
+            this.priceLabel.Text = phone.Price.ToString("C");
+        }
+
+        private void createObjectButton_Click(object sender, EventArgs e)
+        {
+            // 建立 CellPhone 類別的新實例，並從表單讀取資料填入
+            CellPhone myPhone = new CellPhone();    
+
+            GetPhoneData(myPhone);  
+            
+        }
+
+        private void exitButton_Click(object sender, EventArgs e)
+        {
+            // 關閉表單。
+            this.Close();
+        }
+    }
+}
