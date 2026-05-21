@@ -1,0 +1,118 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Account_Simulator
+{
+    public partial class Form1 : Form
+    {
+        
+        // BankAccount 欄位：建立帳戶後會指向一個 BankAccount 物件
+        private BankAccount account;
+
+        public Form1()
+        {
+            InitializeComponent();
+            // 將建立帳戶按鈕事件掛到事件處理函式（確保 Designer 已宣告此按鈕）
+            this.createAccountButton.Click += new EventHandler(this.createAccountButton_Click);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // Display the starting balance.
+            // 預設清空餘額顯示，直到建立帳戶
+            this.balanceTextBox.Text = string.Empty;
+        }
+
+        private void depositButton_Click(object sender, EventArgs e)
+        {
+            // 存款處理：解析輸入金額並呼叫 account.Deposit
+            if (account == null)
+            {
+                MessageBox.Show("請先建立帳戶。", "操作錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (decimal.TryParse(depositTextBox.Text, out decimal amount))
+            {
+                try
+                {
+                    account.Deposit(amount);
+                    this.balanceTextBox.Text = account.Balance.ToString("F2");
+                }
+                catch (ArgumentException ex)
+                {
+                    MessageBox.Show(ex.Message, "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("請輸入有效的金額。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void withdrawButton_Click(object sender, EventArgs e)
+        {
+            // 提款處理：解析輸入金額並呼叫 account.Withdraw
+            if (account == null)
+            {
+                MessageBox.Show("請先建立帳戶。", "操作錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (decimal.TryParse(withdrawTextBox.Text, out decimal amount))
+            {
+                try
+                {
+                    account.Withdraw(amount);
+                    this.balanceTextBox.Text = account.Balance.ToString("F2");
+                }
+                catch (ArgumentException ex)
+                {
+                    MessageBox.Show(ex.Message, "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message, "交易錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("請輸入有效的金額。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void exitButton_Click(object sender, EventArgs e)
+        {
+            // Close the form.
+            this.Close();
+        }
+
+        private void accountNumberLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // 建立帳戶按鈕事件處理：從輸入欄位讀取帳號、姓名與開戶金額並建立 BankAccount
+        private void createAccountButton_Click(object sender, EventArgs e)
+        {
+            if (decimal.TryParse(openingAmountTextBox.Text, out decimal amount))
+            {
+                // 使用輸入的帳號、姓名與開戶金額建立帳戶
+                account = new BankAccount(accountNumberTextBox.Text, nameTextBox.Text, amount);
+                // 顯示建立後的餘額
+                this.balanceTextBox.Text = account.Balance.ToString("F2");
+            }
+            else
+            {
+                MessageBox.Show("請輸入有效的金額。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+    }
+}

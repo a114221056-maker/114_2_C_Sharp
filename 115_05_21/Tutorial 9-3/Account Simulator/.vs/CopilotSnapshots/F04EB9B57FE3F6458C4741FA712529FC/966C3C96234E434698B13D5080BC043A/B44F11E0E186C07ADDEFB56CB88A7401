@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Account_Simulator
+{
+    class BankAccount
+    {
+        // 帳戶相關私有欄位
+        private decimal balance;       // 帳戶餘額
+        private string name;           // 帳戶持有人姓名
+        private string accountNumber;  // 帳號
+        
+    }
+}
