@@ -1,0 +1,58 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Food_Facts
+{
+    public partial class NutritionForm : Form
+    {
+        // 用來接收從 MainForm 傳入的 Fooditem 物件
+        private Fooditem foodItem;
+
+        // 預設無參建構子（保留）
+        public NutritionForm()
+        {
+            InitializeComponent();
+        }
+
+        // 帶參建構子：接收 Fooditem，並在表單初始化後顯示其資料
+        public NutritionForm(Fooditem foodItem)
+        {
+            InitializeComponent();
+            this.foodItem = foodItem;
+
+            // 若有提供食物資料，將其顯示在表單的標籤上
+            if (this.foodItem != null)
+            {
+                this.foodLabel.Text = this.foodItem.Name;
+                this.caloriesLabel.Text = this.foodItem.Calories.ToString();
+                this.fatLabel.Text = this.foodItem.Fat.ToString();
+                this.carbLabel.Text = this.foodItem.Carb.ToString();
+            }
+        }
+
+        private void closeButton_Click(object sender, EventArgs e)
+        {
+            // Close the form.
+            this.Close();
+        }
+
+        // 表單載入事件：在此亦可將 foodItem 的資料顯示到標籤上（若建構子未設定）
+        private void NutritionForm_Load(object sender, EventArgs e)
+        {
+            if (this.foodItem != null)
+            {
+                this.foodLabel.Text = this.foodItem.Name;
+                this.caloriesLabel.Text = this.foodItem.Calories.ToString();
+                this.fatLabel.Text = this.foodItem.Fat.ToString();
+                this.carbLabel.Text = this.foodItem.Carb.ToString();
+            }
+        }
+    }
+}

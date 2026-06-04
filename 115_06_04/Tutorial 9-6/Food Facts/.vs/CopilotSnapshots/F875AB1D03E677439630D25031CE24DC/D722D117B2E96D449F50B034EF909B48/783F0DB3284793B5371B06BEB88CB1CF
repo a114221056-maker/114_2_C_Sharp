@@ -1,0 +1,99 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Food_Facts
+{
+    public partial class MainForm : Form
+    {
+        // 使用者名稱欄位（公開），可由其他表單或類別存取。
+        // 預設值設為 "Chuckhu"，可依需求修改。
+        public string username = "Chuckhu";
+
+        // 如果需要也可以啟用下方屬性封裝（目前保留為註解示範） :
+        // public string Username
+        // {
+        //     get { return username; }
+        // }
+
+        public MainForm()
+        {
+            InitializeComponent();
+        }
+
+        private void displayButton_Click(object sender, EventArgs e)
+        {
+            // 宣告被選取的 Fooditem 變數（稍後依單選按鈕建立實例）
+            Fooditem selectedFood = null;
+
+            // 建立 NutritionForm 類別的實例。
+            NutritionForm nutriForm = new NutritionForm();
+
+            // 找出被選取的單選按鈕，並將對應資料放入 selectedFood
+            if (bananaRadioButton.Checked)
+            {
+                selectedFood = new Fooditem
+                {
+                    Name = "一根香蕉",
+                    Calories = 100,
+                    Fat = 0.4,
+                    Carb = 27
+                };
+            }
+            else if (popcornRadioButton.Checked)
+            {
+                selectedFood = new Fooditem
+                {
+                    Name = "一杯空氣爆米花",
+                    Calories = 31,
+                    Fat = 0.4,
+                    Carb = 6
+                };
+            }
+            else if (muffinRadioButton.Checked)
+            {
+                selectedFood = new Fooditem
+                {
+                    Name = "一個大藍莓瑪芬",
+                    Calories = 385,
+                    Fat = 9,
+                    Carb = 67
+                };
+            }
+
+            // 若有選取食物，將資料顯示在 NutritionForm 的標籤上
+            if (selectedFood != null)
+            {
+                nutriForm.foodLabel.Text = selectedFood.Name;
+                nutriForm.caloriesLabel.Text = selectedFood.Calories.ToString();
+                nutriForm.fatLabel.Text = selectedFood.Fat.ToString();
+                nutriForm.carbLabel.Text = selectedFood.Carb.ToString();
+            }
+
+            // 顯示 NutritionForm。
+            nutriForm.ShowDialog();
+        }
+
+        private void exitButton_Click(object sender, EventArgs e)
+        {
+            // Close the form.
+            this.Close();
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void muffinRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
