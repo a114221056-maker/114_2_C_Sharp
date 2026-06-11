@@ -1,0 +1,99 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace WinFormsApp2
+{
+    /// <summary>
+    /// 獨立的修改員工表單：顯示指定索引的員工資料並允許修改
+    /// </summary>
+    public class EditEmployeeForm : Form
+    {
+        private EmployeeForm innerForm;
+        private Button btnSave;
+        private Button btnCancel;
+        private List<Employee> employees;
+        private int index;
+
+        public EditEmployeeForm(List<Employee> employees, int index)
+        {
+            this.employees = employees;
+            this.index = index;
+            InitializeComponent();
+            LoadEmployee();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "修改員工資料";
+            this.ClientSize = new Size(460, 360);
+            this.StartPosition = FormStartPosition.CenterParent;
+
+            innerForm = new EmployeeForm();
+            innerForm.TopLevel = false;
+            innerForm.FormBorderStyle = FormBorderStyle.None;
+            innerForm.Dock = DockStyle.Top;
+            innerForm.Height = 300;
+
+            btnSave = new Button() { Text = "儲存", Location = new Point(180, 310), Size = new Size(80, 36) };
+            btnCancel = new Button() { Text = "取消", Location = new Point(280, 310), Size = new Size(80, 36) };
+
+            btnSave.Click += BtnSave_Click;
+            btnCancel.Click += BtnCancel_Click;
+
+            this.Controls.Add(innerForm);
+            this.Controls.Add(btnSave);
+            this.Controls.Add(btnCancel);
+
+            innerForm.Show();
+        }
+
+        private void LoadEmployee()
+        {
+            if (index < 0 || index >= employees.Count) return;
+            var emp = employees[index];
+
+            innerForm.NameTextBox.Text = emp.Name;
+            innerForm.IdNumberTextBox.Text = emp.IdNumber.ToString();
+            innerForm.DepartmentTextBox.Text = emp.Department;
+            innerForm.PositionTextBox.Text = emp.Position;
+        }
+
+        private void BtnSave_Click(object? sender, EventArgs e)
+        {
+            var txtName = innerForm.NameTextBox;
+            var txtId = innerForm.IdNumberTextBox;
+            var txtDept = innerForm.DepartmentTextBox;
+            var txtPos = innerForm.PositionTextBox;
+
+            if (!int.TryParse(txtId.Text.Trim(), out int id))
+            {
+                MessageBox.Show("員工編號請輸入有效的整數。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 檢查是否有其他員工使用同樣的編號
+            for (int i = 0; i < employees.Count; i++)
+            {
+                if (i == index) continue;
+                if (employees[i].IdNumber == id)
+                {
+                    MessageBox.Show($"已存在員工編號 {id}。", "重複編號", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+            }
+
+            employees[index] = new Employee(txtName.Text.Trim(), id, txtDept.Text.Trim(), txtPos.Text.Trim());
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+        private void BtnCancel_Click(object? sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+    }
+}

@@ -1,0 +1,97 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace WinFormsApp2
+{
+    /// <summary>
+    /// 獨立的查詢員工表單：允許輸入編號或選取列表中的員工，並回傳選取索引
+    /// </summary>
+    public class SearchEmployeeForm : Form
+    {
+        private TextBox txtSearch;
+        private Button btnSearch;
+        private ListBox listBox;
+        private Button btnOK;
+        private Button btnCancel;
+        private List<Employee> employees;
+
+        public int SelectedIndex { get; private set; } = -1;
+
+        public SearchEmployeeForm(List<Employee> employees)
+        {
+            this.employees = employees;
+            InitializeComponent();
+            LoadList();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "查詢員工";
+            this.ClientSize = new Size(600, 460);
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.Font = new Font("微軟正黑體", 14F);
+
+            txtSearch = new TextBox() { Location = new Point(20, 20), Size = new Size(300, 30) };
+            btnSearch = new Button() { Text = "搜尋", Location = new Point(340, 18), Size = new Size(80, 36) };
+            listBox = new ListBox() { Location = new Point(20, 70), Size = new Size(540, 320) };
+            btnOK = new Button() { Text = "確定", Location = new Point(200, 400), Size = new Size(80, 36) };
+            btnCancel = new Button() { Text = "取消", Location = new Point(300, 400), Size = new Size(80, 36) };
+
+            btnSearch.Click += BtnSearch_Click;
+            btnOK.Click += BtnOK_Click;
+            btnCancel.Click += BtnCancel_Click;
+
+            this.Controls.Add(txtSearch);
+            this.Controls.Add(btnSearch);
+            this.Controls.Add(listBox);
+            this.Controls.Add(btnOK);
+            this.Controls.Add(btnCancel);
+        }
+
+        private void LoadList()
+        {
+            listBox.Items.Clear();
+            foreach (var e in employees)
+            {
+                listBox.Items.Add($"{e.IdNumber}\t{e.Name}");
+            }
+        }
+
+        private void BtnSearch_Click(object? sender, EventArgs e)
+        {
+            if (int.TryParse(txtSearch.Text.Trim(), out int id))
+            {
+                int idx = employees.FindIndex(x => x.IdNumber == id);
+                if (idx >= 0)
+                {
+                    listBox.SelectedIndex = idx;
+                    listBox.TopIndex = Math.Max(0, idx - 3);
+                }
+                else
+                {
+                    MessageBox.Show($"找不到編號為 {id} 的員工。", "查詢結果", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            else
+            {
+                MessageBox.Show("請輸入有效的數字編號。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void BtnOK_Click(object? sender, EventArgs e)
+        {
+            SelectedIndex = listBox.SelectedIndex;
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+        private void BtnCancel_Click(object? sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+    }
+}

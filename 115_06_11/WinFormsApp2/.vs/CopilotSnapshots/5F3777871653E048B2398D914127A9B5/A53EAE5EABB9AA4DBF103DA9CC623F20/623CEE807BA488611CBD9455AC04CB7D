@@ -1,0 +1,138 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+
+namespace WinFormsApp2
+{
+    public partial class Form1 : Form
+    {
+        // 員工集合：用來儲存目前的員工資料
+        private List<Employee> employees = new List<Employee>();
+
+        public Form1()
+        {
+            InitializeComponent();
+            // 範例資料：使用 Employee 物件，並以 "IdNumber\tName" 顯示在 ListBox 中
+            employees.Add(new Employee("王小明", 1001));
+            employees.Add(new Employee("陳美華", 1002));
+
+            // 將集合內容繫結/顯示於 ListBox
+            RefreshEmployeeList();
+        }
+
+        private void btnAdd_Click(object? sender, EventArgs e)
+        {
+            // 開啟員工輸入視窗以新增員工
+            using (var form = new EmployeeForm())
+            {
+                form.Text = "新增員工";
+                if (form.ShowDialog(this) == DialogResult.OK)
+                {
+                    var emp = form.EmployeeResult;
+                    if (emp != null)
+                    {
+                        employees.Add(emp);
+                        RefreshEmployeeList();
+                    }
+                }
+            }
+        }
+
+        private void btnDelete_Click(object? sender, EventArgs e)
+        {
+            // 刪除選取的員工：從內部集合移除後重新整理 ListBox 顯示
+            int idx = employeeListBox.SelectedIndex;
+            if (idx >= 0 && idx < employees.Count)
+            {
+                employees.RemoveAt(idx);
+                RefreshEmployeeList();
+            }
+            else
+            {
+                MessageBox.Show("請先選擇要刪除的員工。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void btnEdit_Click(object? sender, EventArgs e)
+        {
+            // 編輯選取的員工
+            int idx = employeeListBox.SelectedIndex;
+            if (idx >= 0 && idx < employees.Count)
+            {
+                var current = employees[idx];
+                using (var form = new EmployeeForm(current))
+                {
+                    form.Text = "修改員工資料";
+                    if (form.ShowDialog(this) == DialogResult.OK)
+                    {
+                        var updated = form.EmployeeResult;
+                        if (updated != null)
+                        {
+                            employees[idx] = updated;
+                            RefreshEmployeeList();
+                            // 保持選取於剛剛修改的項目
+                            employeeListBox.SelectedIndex = idx;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("請先選擇要修改的員工。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void btnSearch_Click(object? sender, EventArgs e)
+        {
+            // 以員工編號查詢並選取匹配的項目
+            using (var prompt = new PromptForm("請輸入要查詢的員工編號："))
+            {
+                if (prompt.ShowDialog(this) == DialogResult.OK)
+                {
+                    if (int.TryParse(prompt.InputText.Trim(), out int id))
+                    {
+                        int idx = employees.FindIndex(e => e.IdNumber == id);
+                        if (idx >= 0)
+                        {
+                            employeeListBox.SelectedIndex = idx;
+                            // 確保選取項目可見
+                            employeeListBox.TopIndex = Math.Max(0, idx - 3);
+                        }
+                        else
+                        {
+                            MessageBox.Show($"找不到編號為 {id} 的員工。", "查詢結果", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("請輸入有效的數字編號。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+            }
+        }
+
+        private void btnClose_Click(object? sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void lblEmployees_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// 重新整理 ListBox 的顯示內容。
+        /// 顯示格式：IdNumber[tab]Name，例如：1001    王小明
+        /// </summary>
+        private void RefreshEmployeeList()
+        {
+            employeeListBox.Items.Clear();
+            foreach (var emp in employees)
+            {
+                // 使用 tab 分隔顯示編號與姓名
+                employeeListBox.Items.Add($"{emp.IdNumber}\t{emp.Name}");
+            }
+        }
+    }
+}

@@ -1,0 +1,192 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace WinFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        // 每筆摩斯碼資料的結構：包含字元與對應的摩斯碼
+        private struct MorseEntry
+        {
+            public char Symbol;    // 要對應的字元
+            public string Code;    // 該字元對應的摩斯碼字串
+
+            public MorseEntry(char symbol, string code)
+            {
+                Symbol = symbol;
+                Code = code;
+            }
+        }
+
+        // 使用 List 儲存完整摩斯密碼表（要求：不可使用 Dictionary）
+        private List<MorseEntry> morseTable = new List<MorseEntry>();
+
+        public Form1()
+        {
+            InitializeComponent();
+            // 建構時嘗試讀取同目錄下的 morse_code_table.md 來建立對照表
+            // 若檔案不存在則保留空的對照表，後續會顯示錯誤提示
+            LoadMorseTableFromFile("morse_code_table.md");
+        }
+
+        private void btnConvert_Click(object sender, EventArgs e)
+        {
+            listBox1.Items.Clear();
+            string input = textBoxInput.Text ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                MessageBox.Show("請輸入要轉換的字串。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // 使用由檔案載入的對照表進行轉換
+            var morse = ConvertToMorse(input);
+            textBoxMorse.Text = morse;
+
+            // populate list box with per-character mapping
+            foreach (var ch in input)
+            {
+                // 逐字顯示對應的摩斯碼（使用單字元查詢）
+                listBox1.Items.Add($"{ch} : {GetMorseForChar(ch)}");
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            textBoxInput.Clear();
+            textBoxMorse.Clear();
+            listBox1.Items.Clear();
+        }
+
+        // 將輸入文字轉換為摩斯碼，使用預先由檔案建立的 morseMap
+        private string ConvertToMorse(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return string.Empty;
+
+            var parts = text.Select(ch => GetMorseForChar(ch));
+            return string.Join(" ", parts);
+        }
+
+        // 取得單一字元的摩斯碼，若找不到則回傳 "?"
+        private string GetMorseForChar(char ch)
+        {
+            // 先嘗試直接比對
+            var found = morseTable.FirstOrDefault(e => e.Symbol == ch);
+            if (!string.IsNullOrEmpty(found.Code))
+                return found.Code;
+
+            // 再嘗試以大寫字元比對（針對英文字母）
+            var up = char.ToUpperInvariant(ch);
+            found = morseTable.FirstOrDefault(e => e.Symbol == up);
+            if (!string.IsNullOrEmpty(found.Code))
+                return found.Code;
+
+            return "?";
+        }
+
+        // 讀取 morse_code_table.md 並建立 morseMap
+        // 要求：使用 StreamReader 並透過 File.OpenText 開啟檔案，使用 !inputFile.EndOfStream 判斷是否還有資料
+        private void LoadMorseTableFromFile(string relativePath)
+        {
+            try
+            {
+                // 以應用程式執行目錄為基準尋找檔案
+                var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                var fullPath = Path.Combine(baseDir, relativePath);
+
+                if (!File.Exists(fullPath))
+                {
+                    MessageBox.Show($"找不到摩斯碼表檔案：{fullPath}", "檔案遺失", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // 使用 File.OpenText 開啟並取得 StreamReader
+                using (StreamReader inputFile = File.OpenText(fullPath))
+                {
+                    // 逐行讀取檔案直到檔案結尾
+                    while (!inputFile.EndOfStream)
+                    {
+                        var line = inputFile.ReadLine();
+                        if (string.IsNullOrWhiteSpace(line))
+                            continue;
+
+                        line = line.Trim();
+                        // 忽略 Markdown 標題或表格分隔列
+                        if (line.StartsWith("#") || line.StartsWith("---") || line.StartsWith("|---"))
+                            continue;
+
+                        string key = null;
+                        string code = null;
+
+                        // 處理 markdown 表格格式的行，例如: | A | .- |
+                        if (line.Contains("|"))
+                        {
+                            var cols = line.Split('|').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray();
+                            if (cols.Length >= 2)
+                            {
+                                key = cols[0];
+                                code = cols[1];
+                            }
+                        }
+                        else
+                        {
+                            // 其他可能為空白分隔，例如: A .-
+                            var parts = line.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (parts.Length >= 2)
+                            {
+                                key = parts[0];
+                                code = parts[1];
+                            }
+                        }
+
+                        if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(code))
+                            continue;
+
+                        // 處理 key 為 "space" 或 " " 的情況
+                        char mapChar;
+                        if (key.Equals("space", StringComparison.OrdinalIgnoreCase) || key == " ")
+                        {
+                            mapChar = ' ';
+                        }
+                        else if (key.Length == 1)
+                        {
+                            mapChar = key[0];
+                        }
+                        else
+                        {
+                            // 若 key 長度不只一個字元，嘗試取第一個字元（保守處理）
+                            mapChar = key[0];
+                        }
+
+                        // 將 code 進行基本清理，移除多餘符號
+                        code = code.Trim();
+
+                        // 將字元統一為大寫以方便查找（英文字母）
+                        mapChar = char.ToUpperInvariant(mapChar);
+
+                        // 新增或更新 List 中的對應項目
+                        var existingIndex = morseTable.FindIndex(e => e.Symbol == mapChar);
+                        if (existingIndex >= 0)
+                        {
+                            // 更新現有項目的摩斯碼
+                            morseTable[existingIndex] = new MorseEntry(mapChar, code);
+                        }
+                        else
+                        {
+                            // 新增一筆資料
+                            morseTable.Add(new MorseEntry(mapChar, code));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"讀取摩斯碼表時發生錯誤：{ex.Message}", "讀檔錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+    }
+}

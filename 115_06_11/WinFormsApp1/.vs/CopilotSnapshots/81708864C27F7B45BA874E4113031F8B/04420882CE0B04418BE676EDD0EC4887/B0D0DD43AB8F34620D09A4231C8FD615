@@ -1,0 +1,65 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace WinFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void btnConvert_Click(object sender, EventArgs e)
+        {
+            listBox1.Items.Clear();
+            string input = textBoxInput.Text ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                MessageBox.Show("請輸入要轉換的字串。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Simple placeholder Morse conversion: map letters/digits to dots/dashes
+            var morse = ConvertToMorse(input);
+            textBoxMorse.Text = morse;
+
+            // populate list box with per-character mapping
+            foreach (var ch in input)
+            {
+                listBox1.Items.Add($"{ch} : {ConvertToMorse(ch.ToString())}");
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            textBoxInput.Clear();
+            textBoxMorse.Clear();
+            listBox1.Items.Clear();
+        }
+
+        private string ConvertToMorse(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return string.Empty;
+
+            var map = new Dictionary<char, string>()
+            {
+                ['A'] = ".-", ['B'] = "-...", ['C'] = "-.-.", ['D'] = "-..", ['E'] = ".",
+                ['F'] = "..-.", ['G'] = "--.", ['H'] = "....", ['I'] = "..", ['J'] = ".---",
+                ['K'] = "-.-", ['L'] = ".-..", ['M'] = "--", ['N'] = "-.", ['O'] = "---",
+                ['P'] = ".--.", ['Q'] = "--.-", ['R'] = ".-.", ['S'] = "...", ['T'] = "-",
+                ['U'] = "..-", ['V'] = "...-", ['W'] = ".--", ['X'] = "-..-", ['Y'] = "-.--",
+                ['Z'] = "--..",
+                ['0'] = "-----", ['1'] = ".----", ['2'] = "..---", ['3'] = "...--", ['4'] = "....-",
+                ['5'] = ".....", ['6'] = "-....", ['7'] = "--...", ['8'] = "---..", ['9'] = "----.",
+                [' '] = "/"
+            };
+
+            var parts = text.ToUpperInvariant().Select(ch => map.TryGetValue(ch, out var m) ? m : "?");
+            return string.Join(" ", parts);
+        }
+    }
+}

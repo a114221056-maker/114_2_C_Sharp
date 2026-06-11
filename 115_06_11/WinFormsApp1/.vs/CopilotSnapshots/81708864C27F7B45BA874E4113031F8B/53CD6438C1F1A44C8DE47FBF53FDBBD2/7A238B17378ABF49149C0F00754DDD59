@@ -1,0 +1,225 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace WinFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        // 使用 Dictionary 儲存摩斯碼對照（啟動時由檔案載入）
+        private Dictionary<char, string> morseMap = new Dictionary<char, string>();
+        // 表示是否成功載入摩斯碼表，若為 false 則禁止轉換
+        private bool morseLoaded = false;
+
+        public Form1()
+        {
+            InitializeComponent();
+            // 建構時嘗試讀取同目錄下的 morse_code_table.md 來建立對照表
+            // 若檔案不存在則保留空的對照表，後續會顯示錯誤提示
+            LoadMorseTableFromFile("morse_code_table.md");
+        }
+
+        private void btnConvert_Click(object sender, EventArgs e)
+        {
+            listBox1.Items.Clear();
+            string input = textBoxInput.Text ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                MessageBox.Show("請輸入要轉換的字串。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // 檢查是否成功載入摩斯碼表，若未載入則禁止轉換
+            if (!morseLoaded)
+            {
+                MessageBox.Show("摩斯碼表未載入，無法進行轉換。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // 使用由檔案載入的對照表進行轉換
+            var morse = ConvertToMorse(input);
+            textBoxMorse.Text = morse;
+
+            // 顯示每個字元與其對應的摩斯碼，單列顯示格式範例： "H → ...."
+            foreach (var ch in input)
+            {
+                var code = GetMorseForChar(ch);
+                string label;
+                if (char.IsWhiteSpace(ch))
+                {
+                    label = "空白";
+                }
+                else
+                {
+                    label = char.ToUpperInvariant(ch).ToString();
+                }
+
+                listBox1.Items.Add($"{label} → {code}");
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            textBoxInput.Clear();
+            textBoxMorse.Clear();
+            listBox1.Items.Clear();
+        }
+
+        // 將輸入文字轉換為摩斯碼，使用預先由檔案建立的 morseMap
+        private string ConvertToMorse(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return string.Empty;
+
+            var parts = text.Select(ch => GetMorseForChar(ch));
+            return string.Join(" ", parts);
+        }
+
+        // 取得單一字元的摩斯碼。
+        // 規則：
+        // - 英文字母不區分大小寫（會嘗試以大寫鍵查詢）。
+        // - 空白字元若有定義則使用定義，否則回傳 "/" 作為字與字之間的分隔符號。
+        // - 若字元未定義於 morse_code_table.md，則回傳 null（呼叫端會忽略該字元）。
+        private string GetMorseForChar(char ch)
+        {
+            // 空白字元處理：若對照表有定義則使用，否則視為單字分隔符號 '/'
+            if (char.IsWhiteSpace(ch))
+            {
+                if (morseMap.TryGetValue(' ', out var spCode))
+                    return spCode;
+                return "/";
+            }
+
+            // 先嘗試直接比對（原字元）
+            if (morseMap.TryGetValue(ch, out var code))
+                return code;
+
+            // 再嘗試以大寫字元比對（針對英文字母）
+            var up = char.ToUpperInvariant(ch);
+            if (morseMap.TryGetValue(up, out code))
+                return code;
+
+            // 若未定義，回傳 null 表示要忽略該字元
+            return null;
+        }
+
+        // 讀取 morse_code_table.md 並建立 morseMap
+        // 要求：使用 StreamReader 並透過 File.OpenText 開啟檔案，使用 !inputFile.EndOfStream 判斷是否還有資料
+        private void LoadMorseTableFromFile(string relativePath)
+        {
+            try
+            {
+                // 以應用程式執行目錄為基準尋找檔案
+                var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                var fullPath = Path.Combine(baseDir, relativePath);
+
+                if (!File.Exists(fullPath))
+                {
+                    MessageBox.Show($"找不到摩斯碼表檔案：{fullPath}", "檔案遺失", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    morseLoaded = false;
+                    btnConvert.Enabled = false;
+                    return;
+                }
+
+                // 使用 File.OpenText 開啟並取得 StreamReader
+                using (StreamReader inputFile = File.OpenText(fullPath))
+                {
+                    // 逐行讀取檔案直到檔案結尾
+                    while (!inputFile.EndOfStream)
+                    {
+                        var line = inputFile.ReadLine();
+                        if (string.IsNullOrWhiteSpace(line))
+                            continue;
+
+                        line = line.Trim();
+                        // 忽略 Markdown 標題或表格分隔列
+                        if (line.StartsWith("#") || line.StartsWith("---") || line.StartsWith("|---"))
+                            continue;
+
+                        string key = null;
+                        string code = null;
+
+                        // 處理 markdown 表格格式的行，例如: | A | .- |
+                        if (line.Contains("|"))
+                        {
+                            var cols = line.Split('|').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray();
+                            if (cols.Length >= 2)
+                            {
+                                key = cols[0];
+                                code = cols[1];
+                            }
+                        }
+                        else
+                        {
+                            // 其他可能為空白分隔，例如: A .-
+                            var parts = line.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (parts.Length >= 2)
+                            {
+                                key = parts[0];
+                                code = parts[1];
+                            }
+                        }
+
+                        if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(code))
+                        {
+                            MessageBox.Show($"摩斯碼表格式錯誤：無法解析行 '{line}'。", "格式錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            morseLoaded = false;
+                            btnConvert.Enabled = false;
+                            return;
+                        }
+
+                        // 處理 key 為 "space" 或 " " 的情況
+                        char mapChar;
+                        if (key.Equals("space", StringComparison.OrdinalIgnoreCase) || key == " ")
+                        {
+                            mapChar = ' ';
+                        }
+                        else if (key.Length == 1)
+                        {
+                            mapChar = key[0];
+                        }
+                        else
+                        {
+                            // 若發現欄位為表頭（例如 "Symbol"/"Morse"），則略過該行
+                            // 當 cols[0] 長度大於 1，且不是 "space"，視為表頭而跳過
+                            // 但在空白分隔的格式中，若第一欄長度>1 則視為格式錯誤
+                            if (line.Contains("|"))
+                            {
+                                // 已視為表頭，跳過
+                                continue;
+                            }
+                            else
+                            {
+                                // 空白分隔格式中出現非單一字元 key，視為格式錯誤
+                                MessageBox.Show($"摩斯碼表格式錯誤：無效的 key '{key}'。", "格式錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                morseLoaded = false;
+                                btnConvert.Enabled = false;
+                                return;
+                            }
+                        }
+
+                        // 將 code 進行基本清理，移除多餘符號
+                        code = code.Trim();
+
+                        // 將字元統一為大寫以方便查找（英文字母）
+                        mapChar = char.ToUpperInvariant(mapChar);
+
+                        // 新增或更新 Dictionary 中的對應項目
+                        morseMap[mapChar] = code;
+                    }
+                }
+                // 若執行到此處且沒有發生格式錯誤，表示載入成功
+                morseLoaded = morseMap.Count > 0;
+                btnConvert.Enabled = morseLoaded;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"讀取摩斯碼表時發生錯誤：{ex.Message}", "讀檔錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                morseLoaded = false;
+                btnConvert.Enabled = false;
+            }
+        }
+    }
+}

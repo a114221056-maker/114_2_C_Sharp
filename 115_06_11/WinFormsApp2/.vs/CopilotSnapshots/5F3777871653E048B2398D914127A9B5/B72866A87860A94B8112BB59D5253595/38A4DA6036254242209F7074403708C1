@@ -1,0 +1,53 @@
+﻿using System;
+using System.Windows.Forms;
+
+namespace WinFormsApp2
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+            // sample data
+            employeeListBox.Items.Add("001 - 王小明");
+            employeeListBox.Items.Add("002 - 李小華");
+        }
+
+        private void btnAdd_Click(object? sender, EventArgs e)
+        {
+            MessageBox.Show("新增員工 - 未實作", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnDelete_Click(object? sender, EventArgs e)
+        {
+            if (employeeListBox.SelectedIndex >= 0)
+            {
+                employeeListBox.Items.RemoveAt(employeeListBox.SelectedIndex);
+            }
+            else
+            {
+                MessageBox.Show("請先選擇要刪除的員工。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void btnEdit_Click(object? sender, EventArgs e)
+        {
+            MessageBox.Show("修改員工 - 未實作", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnSearch_Click(object? sender, EventArgs e)
+        {
+            MessageBox.Show("查詢員工 - 未實作", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnClose_Click(object? sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void lblEmployees_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}

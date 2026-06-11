@@ -1,0 +1,78 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace WinFormsApp2
+{
+    /// <summary>
+    /// 獨立的刪除員工表單：顯示清單並允許使用者選擇刪除項目
+    /// </summary>
+    public class DeleteEmployeeForm : Form
+    {
+        private ListBox listBox;
+        private Button btnDelete;
+        private Button btnCancel;
+        private List<Employee> employees;
+
+        public DeleteEmployeeForm(List<Employee> employees)
+        {
+            this.employees = employees;
+            InitializeComponent();
+            LoadList();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "刪除員工";
+            this.ClientSize = new Size(600, 420);
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.Font = new Font("微軟正黑體", 14F);
+
+            listBox = new ListBox() { Location = new Point(20, 20), Size = new Size(540, 320) };
+            btnDelete = new Button() { Text = "刪除", Location = new Point(200, 350), Size = new Size(80, 36) };
+            btnCancel = new Button() { Text = "取消", Location = new Point(300, 350), Size = new Size(80, 36) };
+
+            btnDelete.Click += BtnDelete_Click;
+            btnCancel.Click += BtnCancel_Click;
+
+            this.Controls.Add(listBox);
+            this.Controls.Add(btnDelete);
+            this.Controls.Add(btnCancel);
+        }
+
+        private void LoadList()
+        {
+            listBox.Items.Clear();
+            foreach (var e in employees)
+            {
+                listBox.Items.Add($"{e.IdNumber}\t{e.Name}");
+            }
+        }
+
+        private void BtnDelete_Click(object? sender, EventArgs e)
+        {
+            int idx = listBox.SelectedIndex;
+            if (idx >= 0 && idx < employees.Count)
+            {
+                var result = MessageBox.Show($"確定要刪除 {employees[idx].Name}（編號 {employees[idx].IdNumber}）？", "確認刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    employees.RemoveAt(idx);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+            }
+            else
+            {
+                MessageBox.Show("請先選擇要刪除的員工。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void BtnCancel_Click(object? sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+    }
+}
